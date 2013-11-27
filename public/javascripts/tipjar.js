@@ -1,8 +1,9 @@
 CloudFlare.define("tipjar",
   ["tipjar/config", "cloudflare/jquery1.7"],
   function(config,$) {
-    window.CF_TIPJAR_SESSION_ID = null;
-    window.tip = null;
+    window.CF_TIPJAR = {};
+    window.CF_TIPJAR['SESSION_ID'] = null;
+    window.CF_TIPJAR['TIP'] = null;
 
     window.addEventListener("message", finishOAuth, false);
 
@@ -13,6 +14,7 @@ CloudFlare.define("tipjar",
         startOAuth();
       }
     });
+
     $('#cf_tipjar_pin').keypress(function(event) {
       if (event.keyCode == 13) {
         event.stopPropagation();
@@ -61,7 +63,7 @@ CloudFlare.define("tipjar",
 
     function startOAuth() {
       // store tip amount for later
-      window.tip = $("#cf_tipjar_amount").val()
+      window.CF_TIPJAR['TIP'] = $("#cf_tipjar_amount").val()
 
       $.magnificPopup.open({
         items: {
@@ -85,11 +87,11 @@ CloudFlare.define("tipjar",
       if (!session_id) return;
 
       // store session ID for sendPayment()
-      window.CF_TIPJAR_SESSION_ID = session_id;
+      window.CF_TIPJAR['SESSION_ID'] = session_id;
 
       // transition to confirm screen
       $('#copy_heading').html("Please authorize this transaction.");
-      $('#copy_body').html("You are tipping $" + window.tip);
+      $('#copy_body').html("You are tipping $" + window.CF_TIPJAR['TIP']);
       $('#midsection').html('&nbsp;');
       $("#endsection").html('<input id="cf_tipjar_pin" name="cf_tipjar_pin" placeholder="PIN" type="password" maxlength="4"><a class="button" onclick="sendPayment();">Done</a>');
 
@@ -99,7 +101,7 @@ CloudFlare.define("tipjar",
     function congratulations() {
       $('#copy_heading').html("You're a good human.");
       $('#copy_body').html("");
-      $('#midsection').html("You tipped the author $" + window.tip);
+      $('#midsection').html("You tipped the author $" + window.CF_TIPJAR['TIP']);
       $('#endsection').html('<a class="button" onclick="hideTipjar();">Close</a>');
     }
 
@@ -107,8 +109,8 @@ CloudFlare.define("tipjar",
       // send payment amount, PIN, and session id, and domain to server
       // display response to user
       $.post("http://cloudflare-tipjar.herokuapp.com/send_payment", {
-        session_id: window.CF_TIPJAR_SESSION_ID,
-        amount: window.tip,
+        session_id: window.CF_TIPJAR['SESSION_ID'],
+        amount: window.CF_TIPJAR['TIP'],
         destination: config.destination,
         pin: $("#cf_tipjar_pin").val()
       }).done(
