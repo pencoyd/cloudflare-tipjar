@@ -5,12 +5,13 @@ CloudFlare.define("tipjar",
     window.CF_TIPJAR['SESSION_ID'] = null;
     window.CF_TIPJAR['TIP'] = null;
 
-    window.addEventListener("message", finishOAuth, false);
-
     var initialize = function() {
       loadCSS();
       $.getScript( "http://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/0.8.9/jquery.magnific-popup.min.js", function() {});
       loadHTML();
+
+      // OAuth processor / listener
+      window.addEventListener("message", finishOAuth, false);
 
       // Cache elements
       var tipjar_frame = $('#tipjar_frame');
@@ -20,7 +21,6 @@ CloudFlare.define("tipjar",
         'tipjar_frame': tipjar_frame,
         'tipjar': tipjar,
         'amount': tipjar_frame.find('#cf_tipjar_amount'),
-        'pin': tipjar_frame.find('#cf_tipjar_pin'),
         'copy_heading': tipjar_frame.find('#copy_heading'),
         'copy_body': tipjar_frame.find('#copy_body'),
         'midsection': tipjar_frame.find('#midsection'),
@@ -28,19 +28,10 @@ CloudFlare.define("tipjar",
       }
 
       // Capture Enter key for input fields
-      window.CF_TIPJAR['ELEMENTS']['amount'].keypress(function(event) {
-        if (event.keyCode == 13) {
-          event.stopPropagation();
-          startOAuth();
-        }
-      });
+      window.CF_TIPJAR['ELEMENTS']['amount'].keypress(submitOauthForm);
 
-      window.CF_TIPJAR['ELEMENTS']['pin'].keypress(function(event) {
-        if (event.keyCode == 13) {
-          event.stopPropagation();
-          sendPayment();
-        }
-      });
+      // Bind a click event to the Done button
+      $(document).on('click', 'a#cf_tipjar_done_btn', submitPaymentForm);
 
       window.CF_TIPJAR['ELEMENTS']['tipjar_frame']
         .find("#hide_tipjar_frame_btn").click(hideTipjar).end()
@@ -63,6 +54,21 @@ CloudFlare.define("tipjar",
       else if (config.display_mode == "always") {
         displayTipjar();
       }
+    }
+
+    var submitOauthForm = function(event) {
+      if (event.keyCode == 13) {
+        event.stopPropagation();
+        startOAuth();
+      }
+    }
+
+    var submitPaymentForm = function(e) {
+      e.preventDefault();
+
+      sendPayment();
+
+      return false;
     }
 
     var logVisit = function() {
@@ -111,7 +117,10 @@ CloudFlare.define("tipjar",
       window.CF_TIPJAR['ELEMENTS']['copy_heading'].html("Please authorize this transaction.");
       window.CF_TIPJAR['ELEMENTS']['copy_body'].html("You are tipping $" + window.CF_TIPJAR['TIP']);
       window.CF_TIPJAR['ELEMENTS']['midsection'].html('&nbsp;');
-      window.CF_TIPJAR['ELEMENTS']['endsection'].html('<input id="cf_tipjar_pin" name="cf_tipjar_pin" placeholder="PIN" type="password" maxlength="4"><a class="button" onclick="sendPayment();">Done</a>');
+      window.CF_TIPJAR['ELEMENTS']['endsection'].html('<input id="cf_tipjar_pin" name="cf_tipjar_pin" placeholder="PIN" type="password" maxlength="4"><a class="button" href="#" id="cf_tipjar_done_btn">Done</a>');
+
+      // Capture enter presses on the PIN input
+      window.CF_TIPJAR['ELEMENTS']['tipjar_frame'].find('#cf_tipjar_pin').keypress(submitPaymentForm);
 
       return;
     }
@@ -132,7 +141,7 @@ CloudFlare.define("tipjar",
           session_id: window.CF_TIPJAR['SESSION_ID'],
           amount: window.CF_TIPJAR['TIP'],
           destination: config.destination,
-          pin: window.CF_TIPJAR['ELEMENTS']['pin'].val()
+          pin: window.CF_TIPJAR['ELEMENTS']['tipjar_frame'].find('#cf_tipjar_pin').val()
         }
       ).done(
         function(data) {
