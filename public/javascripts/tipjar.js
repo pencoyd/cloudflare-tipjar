@@ -1,5 +1,5 @@
-CloudFlare.define("tipjar",
-  ["tipjar/config", "cloudflare/jquery1.7"],
+CloudFlare.define("dwolla_tipjar",
+  ["dwolla_tipjar/config", "cloudflare/jquery1.7"],
   function(config, $) {
     window.CF_TIPJAR = {};
     window.CF_TIPJAR['SESSION_ID'] = null;
