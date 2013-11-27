@@ -1,0 +1,77 @@
+{
+    
+    "name": "Tipjar",
+    "description": "Accept monetary contributions from your grateful visitors",
+    "version": "0.7",
+    "category": "loyalty programs",
+    "main": "public/javascripts/tipjar.js",
+    "config":{
+        "details":{
+            "Language": "English",
+            "Price": "Free",
+            "Restrictions": "None",
+            "TOS":"http://www.cloudflare.com/terms"
+        }, 
+        "assets":{
+           "logos" : {
+                "200px": "./public/images/logo-200.png",
+                "132px": "./public/images/logo-132.png"
+            },
+            "images" : [
+                "./public/images/tipjar.png"
+            ]
+        },
+        "interface": [
+            {
+                "type": "select",
+                "id": "display_mode",
+                "name": "Display Mode",
+                "description": "When should the Tipjar appear?",
+                "options": [
+                    {
+                        "label": "After the user views a certain number of pages on my site.",
+                        "value": "count"
+                    },
+                    {
+                        "label": "After the user spends some amount of time on a page.",
+                        "value": "time"
+                    },
+                    {
+                        "label": "Always.",
+                        "value": "always"
+                    }
+                ]
+            },
+            {
+                "type": "string",
+                "id": "visit_threshold",
+                "name": "Page Threshold",
+                "description": "How many pageviews should a user make before Tipjar appears?",
+                "domain_request": false,
+                "value": "2",
+                "required": false,
+                "private": false
+            },
+            {
+                "type": "string",
+                "id": "time_threshold",
+                "name": "Time Threshold",
+                "description": "How long should a user remain on a page before the tipjar appears? (seconds)",
+                "domain_request": false,
+                "required": false,
+                "value": "30",
+                "private": false
+            },
+            {
+                "type": "string",
+                "id": "destination",
+                "name": "Email",
+                "description": "Your email address, where you'd like to receive your contributions.",
+                "domain_request": false,
+                "required": true,
+                "private": false
+            }
+            
+        ]
+    }
+}

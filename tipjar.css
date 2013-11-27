@@ -1,0 +1,103 @@
+#tipjar_frame {
+	position: fixed; 
+	bottom: 0; 
+	width: 100%; 
+	height: 100px; 
+	padding-top: 20px;
+	padding-bottom: 20px;
+	background-color: white;
+	font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif;
+	display: none;
+}
+
+#tipjar {
+	position: fixed;
+	display: none;
+	bottom:0;
+	width:140px;
+	height: 140px;
+	right:20px;
+}
+
+#tipjar img {
+	width:100%;
+	height:100%;
+}
+
+#copy {
+	width: 30%;
+	height: 100%;
+	float: left;
+}
+
+#copy_heading {
+	font-weight:bold;
+}
+
+#midsection {
+	width: 40%;
+	float: left;
+}
+
+#endsection {
+	width: 30%;
+	float: left;
+}
+
+#hide_tipjar {
+	position: absolute;
+	right: 10px;
+	top:-20px;
+}
+
+#hide_tipjar_frame {
+	position: absolute;
+	right: 20px;
+}
+
+#tipjar_form {
+	padding-left: 20px;
+	width: 400px;
+	height: 60px;
+}
+
+#dollarsign {
+	font-size: 2em;
+}
+
+.button {
+	height: 100%;
+	width: 30px;
+	border: 5px solid white;
+	-webkit-box-shadow: 
+      inset 0 0 8px  rgba(0,0,0,0.1),
+            0 0 16px rgba(0,0,0,0.1); 
+    -moz-box-shadow: 
+      inset 0 0 8px  rgba(0,0,0,0.1),
+            0 0 16px rgba(0,0,0,0.1); 
+    box-shadow: 
+      inset 0 0 8px  rgba(0,0,0,0.1),
+            0 0 16px rgba(0,0,0,0.1); 
+    padding: 15px;
+    background: green;
+    color: white;
+    font-size: 2em;
+}
+
+input {
+	border: 5px solid white; 
+    -webkit-box-shadow: 
+      inset 0 0 8px  rgba(0,0,0,0.1),
+            0 0 16px rgba(0,0,0,0.1); 
+    -moz-box-shadow: 
+      inset 0 0 8px  rgba(0,0,0,0.1),
+            0 0 16px rgba(0,0,0,0.1); 
+    box-shadow: 
+      inset 0 0 8px  rgba(0,0,0,0.1),
+            0 0 16px rgba(0,0,0,0.1); 
+    padding: 15px;
+    background: rgba(255,255,255,0.5);
+    margin: 0 0 10px 0;
+    width: 180px;
+    font-size: 2em;
+}

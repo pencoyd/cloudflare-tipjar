@@ -1,0 +1,246 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="tipjar.css">
+	<link rel="stylesheet" type="text/css" href="magnific-popup.css">
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js" ></script>
+
+	<script>
+		config = {
+			"display_mode": "always",
+			"time_threshold": "2",
+			"visit_threshold": "2",
+			"destination": "reflector@dwolla.com"
+		}
+
+		window.SESSION_ID = null;
+		window.tip = null;
+
+		window.addEventListener("message", finishOAuth, false);
+
+		// capture Enter key for input fields
+		$('#amount').keypress(function(event) {
+			if (event.keyCode == 13) {
+				event.stopPropagation();
+				startOAuth(); 
+			}
+		});
+		$('#pin').keypress(function(event) {
+			if (event.keyCode == 13) {
+				event.stopPropagation();
+				sendPayment(); 
+			}
+		});
+
+		function initialize() {
+			loadCSS();
+			$.getScript( "http://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/0.8.9/jquery.magnific-popup.min.js", function() {});
+			loadHTML();
+
+			$("#hide_tipjar_frame").click(hideTipjar);
+			$("#start").click(startOAuth);
+			$("#tipjar_button").click(displayTipjarFrame);
+			$("#hide_tipjar").click(hideTipjar);
+
+    		if (config.display_mode == "visits") {
+    			total_visits = logVisit();
+    			if (total_visits >= config.visit_threshold) {
+    				displayTipjar();
+    			}
+    		}
+    		else if (config.display_mode == "time") startTimer(config.time_threshold);
+    		
+    		else if (config.display_mode == "always") displayTipjar();
+    	}
+    	function logVisit() {
+    		// store # of visits in cookie.
+    		// return number of total visits
+    		previous_visits = parseInt(getCookie("tj_visits"));
+    		if (isNaN(previous_visits)) previous_visits = 0;
+    		if (previous_visits < 0) return;
+    		document.cookie = "tj_visits=" + (previous_visits + 1);
+    		return previous_visits + 1;
+    	}
+    	function setVisits(number) {
+    		document.cookie = "tj_visits=" + number;
+    	}
+		function startOAuth() {
+			// store tip amount for later
+			window.tip = $("#amount")[0].value;
+
+			$.magnificPopup.open({
+			    items: {
+			      src: "http://127.0.0.1:3000/start_oauth?domain=" + window.location.host,
+			    },
+			    type: 'iframe'
+			});
+			return;
+		}
+
+		function finishOAuth(event) {
+			// event listener, listens for message from oauth iframe.
+			// When triggered, stores session id and closes iframe
+			// then updates tipjar frame with PIN form
+			$.magnificPopup.close();
+			session_id = event.data.session_id;
+			console.log(event.data)
+			console.log(event.data.session_id)
+			if (!session_id) return;
+
+			// store session ID for sendPayment()
+			window.SESSION_ID = session_id;
+
+			// transition to confirm screen
+			$('#copy_heading').html("Please authorize this transaction.");
+			$('#copy_body').html("You are tipping $" + window.tip);
+			$('#midsection').html('&nbsp;');
+			$("#endsection").html('<input id="pin" name="pin" placeholder="PIN" type="password" maxlength="4"><a class="button" onclick="sendPayment();">Done</a>');
+
+			return;
+		}
+
+		function congratulations() {
+			$('#copy_heading').html("You're a good human.");
+			$('#copy_body').html("");
+			$('#midsection').html("You tipped the author $" + window.tip);
+			$('#endsection').html('<a class="button" onclick="hideTipjar();">Close</a>');
+		}
+
+		function sendPayment() {
+			// send payment amount, PIN, and session id, and domain to server
+			// display response to user
+			pin = $("#pin")[0].value;
+			$.post("http://127.0.0.1:3000/send_payment", { 
+				session_id: window.session_id, 
+				amount: window.tip, 
+				destination: config.destination,
+				pin: pin
+			}).done( 
+				function(data) {
+					if (data.success) congratulations();
+					else $('#midsection').html("Please try again.");
+				});
+			return;
+		}
+
+		function displayTipjar() {
+			$('#tipjar')[0].style.display = 'block';
+			return;
+		}
+
+		function startTimer(time) {
+			// waits time seconds before displaying tipjar
+			setTimeout(displayTipjar, 1000 * time);
+		}
+
+		function hideTipjar() {
+			$('#tipjar')[0].style.display = 'none';
+			$('#tipjar_frame')[0].style.display = 'none';
+			// hide tipjar forever, if using visits mode:
+			setVisits(-1);
+		}
+
+		function displayTipjarFrame() {
+			$('#tipjar')[0].style.display = 'none';
+			$('#tipjar_frame')[0].style.display = 'block';
+		}
+
+		function getCookie(name) {
+		    var nameEQ = name + "=";
+		    var ca = document.cookie.split(';');
+		    for(var i=0;i < ca.length;i++) {
+		        var c = ca[i];
+		        while (c.charAt(0)==' ') c = c.substring(1,c.length);
+		        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+		    }
+		    return null;
+		}
+
+		function loadCSS() {
+			// when CSS is finalized, throw it in here
+			tipjar_style = $("<style>#tipjar_frame{position:fixed;bottom:0;width:100%;height:100px;padding-top:20px;padding-bottom:20px;background-color:#fff;font-family:'Lucida Grande','Lucida Sans Unicode','Lucida Sans',Geneva,Verdana,sans-serif;display:none}#tipjar{position:fixed;display:none;bottom:0;width:140px;height:140px;right:20px}#tipjar img{width:100%;height:100%}#copy{width:30%;height:100%;float:left}#copy_heading{font-weight:700}#midsection{width:40%;float:left}#endsection{width:30%;float:left}#hide_tipjar{position:absolute;right:10px;top:-20px}#hide_tipjar_frame{position:absolute;right:20px}#tipjar_form{padding-left:20px;width:400px;height:60px}#dollarsign{font-size:2em}.button{height:100%;width:30px;border:5px solid #fff;-webkit-box-shadow:inset 0 0 8px rgba(0,0,0,.1),0 0 16px rgba(0,0,0,.1);-moz-box-shadow:inset 0 0 8px rgba(0,0,0,.1),0 0 16px rgba(0,0,0,.1);box-shadow:inset 0 0 8px rgba(0,0,0,.1),0 0 16px rgba(0,0,0,.1);padding:15px;background:green;color:#fff;font-size:2em}input{border:5px solid #fff;-webkit-box-shadow:inset 0 0 8px rgba(0,0,0,.1),0 0 16px rgba(0,0,0,.1);-moz-box-shadow:inset 0 0 8px rgba(0,0,0,.1),0 0 16px rgba(0,0,0,.1);box-shadow:inset 0 0 8px rgba(0,0,0,.1),0 0 16px rgba(0,0,0,.1);padding:15px;background:rgba(255,255,255,.5);margin:0 0 10px;width:180px;font-size:2em}</style>").appendTo('head');
+			magnific_style = $("<style>.mfp-bg{top:0;left:0;width:100%;height:100%;z-index:1042;overflow:hidden;position:fixed;background:#0b0b0b;opacity:.8;filter:alpha(opacity=80)}.mfp-wrap{top:0;left:0;width:100%;height:100%;z-index:1043;position:fixed;outline:0!important;-webkit-backface-visibility:hidden}.mfp-container{text-align:center;position:absolute;width:100%;height:100%;left:0;top:0;padding:0 8px;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box}.mfp-container:before{content:'';display:inline-block;height:100%;vertical-align:middle}.mfp-align-top .mfp-container:before{display:none}.mfp-content{position:relative;display:inline-block;vertical-align:middle;margin:0 auto;text-align:left;z-index:1045}.mfp-ajax-holder .mfp-content,.mfp-inline-holder .mfp-content{width:100%;cursor:auto}.mfp-ajax-cur{cursor:progress}.mfp-zoom-out-cur,.mfp-zoom-out-cur .mfp-image-holder .mfp-close{cursor:-moz-zoom-out;cursor:-webkit-zoom-out;cursor:zoom-out}.mfp-zoom{cursor:pointer;cursor:-webkit-zoom-in;cursor:-moz-zoom-in;cursor:zoom-in}.mfp-auto-cursor .mfp-content{cursor:auto}.mfp-arrow,.mfp-close,.mfp-counter,.mfp-preloader{-webkit-user-select:none;-moz-user-select:none;user-select:none}.mfp-loading.mfp-figure{display:none}.mfp-hide{display:none!important}.mfp-preloader{color:#ccc;position:absolute;top:50%;width:auto;text-align:center;margin-top:-.8em;left:8px;right:8px;z-index:1044}.mfp-preloader a{color:#ccc}.mfp-preloader a:hover{color:#fff}.mfp-s-error .mfp-content,.mfp-s-ready .mfp-preloader{display:none}button.mfp-arrow,button.mfp-close{overflow:visible;cursor:pointer;background:0 0;border:0;-webkit-appearance:none;display:block;outline:0;padding:0;z-index:1046;-webkit-box-shadow:none;box-shadow:none}button::-moz-focus-inner{padding:0;border:0}.mfp-close{width:44px;height:44px;line-height:44px;position:absolute;right:0;top:0;text-decoration:none;text-align:center;opacity:.65;padding:0 0 18px 10px;color:#fff;font-style:normal;font-size:28px;font-family:Arial,Baskerville,monospace}.mfp-close:focus,.mfp-close:hover{opacity:1}.mfp-close:active{top:1px}.mfp-close-btn-in .mfp-close{color:#333}.mfp-iframe-holder .mfp-close,.mfp-image-holder .mfp-close{color:#fff;right:-6px;text-align:right;padding-right:6px;width:100%}.mfp-counter{position:absolute;top:0;right:0;color:#ccc;font-size:12px;line-height:18px}.mfp-arrow{position:absolute;opacity:.65;margin:0;top:50%;margin-top:-55px;padding:0;width:90px;height:110px;-webkit-tap-highlight-color:rgba(0,0,0,0)}.mfp-arrow:active{margin-top:-54px}.mfp-arrow:focus,.mfp-arrow:hover{opacity:1}.mfp-arrow .mfp-a,.mfp-arrow .mfp-b,.mfp-arrow:after,.mfp-arrow:before{content:'';display:block;width:0;height:0;position:absolute;left:0;top:0;margin-top:35px;margin-left:35px;border:medium inset transparent}.mfp-arrow .mfp-a,.mfp-arrow:after{border-top-width:13px;border-bottom-width:13px;top:8px}.mfp-arrow .mfp-b,.mfp-arrow:before{border-top-width:21px;border-bottom-width:21px}.mfp-arrow-left{left:0}.mfp-arrow-left .mfp-a,.mfp-arrow-left:after{border-right:17px solid #fff;margin-left:31px}.mfp-arrow-left .mfp-b,.mfp-arrow-left:before{margin-left:25px;border-right:27px solid #3f3f3f}.mfp-arrow-right{right:0}.mfp-arrow-right .mfp-a,.mfp-arrow-right:after{border-left:17px solid #fff;margin-left:39px}.mfp-arrow-right .mfp-b,.mfp-arrow-right:before{border-left:27px solid #3f3f3f}.mfp-iframe-holder{padding-top:40px;padding-bottom:40px}.mfp-iframe-holder .mfp-content{line-height:0;width:100%;max-width:900px}.mfp-iframe-holder .mfp-close{top:-40px}.mfp-iframe-scaler{width:100%;height:0;overflow:hidden;padding-top:56.25%}.mfp-iframe-scaler iframe{position:absolute;display:block;top:0;left:0;width:100%;height:100%;box-shadow:0 0 8px rgba(0,0,0,.6);background:#000}img.mfp-img{width:auto;max-width:100%;height:auto;display:block;line-height:0;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding:40px 0;margin:0 auto}.mfp-figure{line-height:0}.mfp-figure:after{content:'';position:absolute;left:0;top:40px;bottom:40px;display:block;right:0;width:auto;height:auto;z-index:-1;box-shadow:0 0 8px rgba(0,0,0,.6);background:#444}.mfp-figure small{color:#bdbdbd;display:block;font-size:12px;line-height:14px}.mfp-figure figure{margin:0}.mfp-bottom-bar{margin-top:-36px;position:absolute;top:100%;left:0;width:100%;cursor:auto}.mfp-title{text-align:left;line-height:18px;color:#f3f3f3;word-wrap:break-word;padding-right:36px}.mfp-image-holder .mfp-content{max-width:100%}.mfp-gallery .mfp-image-holder .mfp-figure{cursor:pointer}@media screen and (max-width:800px) and (orientation:landscape),screen and (max-height:300px){.mfp-img-mobile .mfp-image-holder{padding-left:0;padding-right:0}.mfp-img-mobile img.mfp-img{padding:0}.mfp-img-mobile .mfp-figure:after{top:0;bottom:0}.mfp-img-mobile .mfp-figure small{display:inline;margin-left:5px}.mfp-img-mobile .mfp-bottom-bar{background:rgba(0,0,0,.6);bottom:0;margin:0;top:auto;padding:3px 5px;position:fixed;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box}.mfp-img-mobile .mfp-bottom-bar:empty{padding:0}.mfp-img-mobile .mfp-counter{right:5px;top:3px}.mfp-img-mobile .mfp-close{top:0;right:0;width:35px;height:35px;line-height:35px;background:rgba(0,0,0,.6);position:fixed;text-align:center;padding:0}}@media all and (max-width:900px){.mfp-arrow{-webkit-transform:scale(0.75);transform:scale(0.75)}.mfp-arrow-left{-webkit-transform-origin:0;transform-origin:0}.mfp-arrow-right{-webkit-transform-origin:100%;transform-origin:100%}.mfp-container{padding-left:6px;padding-right:6px}}.mfp-ie7 .mfp-img{padding:0}.mfp-ie7 .mfp-bottom-bar{width:600px;left:50%;margin-left:-300px;margin-top:5px;padding-bottom:5px}.mfp-ie7 .mfp-container{padding:0}.mfp-ie7 .mfp-content{padding-top:44px}.mfp-ie7 .mfp-close{top:0;right:0;padding-top:0}</style>").appendTo('head');
+		}
+
+		function loadHTML() {
+			$('<div id="tipjar_frame"><a id="hide_tipjar_frame" onclick="hideTipjar();">X</a><div id="copy"><p id="copy_heading">Did you enjoy this content?</p><p id="copy_body">This is free content, and the author lives on tips, so don&#39;t be afraid to tip!</p></div><div id="midsection"><form id="tipjar_form"><a id="dollarsign">$</a><input id="amount" name="amount" value="1.00" type="number" min="0.01" step="0.01"><a class="button" onclick="startOAuth()">Give!</a></form></div><div id="endsection">No thanks, I don&#39;t want to donate to the author.</div></div><div id="tipjar"><img src="./public/images/tipjar.png" onclick="displayTipjarFrame();"/><a id="hide_tipjar" onclick="hideTipjar();">X</a></div>').appendTo('body');
+		}
+		
+		$(document).ready(initialize);
+	</script>
+	<title></title>
+</head>
+<body>
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin commodo odio ac magna suscipit vehicula et sodales urna. Vivamus eu ultrices tellus. Integer eget pulvinar nibh. Ut aliquam est ut nisl facilisis, in vestibulum velit varius. Mauris volutpat, orci at eleifend ornare, augue lacus vestibulum tellus, sed elementum lectus ligula et orci. Donec viverra pulvinar felis, et imperdiet est ornare et. Aenean nec feugiat felis. Vestibulum scelerisque quam non dui dignissim ullamcorper. Integer vitae nulla malesuada nibh fringilla viverra. Etiam ultricies augue libero, at luctus mi hendrerit a. Donec aliquet, tortor in ullamcorper tempus, purus odio placerat leo, nec porta arcu ipsum et diam.
+
+<div id="tipjar_frame">
+	<a id="hide_tipjar_frame">X</a>
+	<div id="copy">
+		<p id="copy_heading">Did you enjoy this content?</p>
+		<p id="copy_body">This is free content, and the author lives on tips, so don&#39;t be afraid to tip!</p>
+	</div>
+	<div id="midsection">
+		<form id="tipjar_form">
+			<a id="dollarsign">$</a>
+			<input id="amount" name="amount" value="1.00" type="number" min="0.01" step="0.01">
+			<a id="start" class="button">Give!</a>
+		</form>
+	</div>
+	<div id="endsection">
+		No thanks, I don&#39;t want to donate to the author.
+	</div>
+</div>
+
+<div id="tipjar">
+	<img id="tipjar_button" src="http://ajax.cloudflare.com/cdn-cgi/nexp/apps/tipjar/images/tipjar.png" />
+	<a id="hide_tipjar">X</a>
+</div>
+
+Pellentesque hendrerit accumsan rutrum. Pellentesque in fermentum sapien, et feugiat diam. Curabitur elementum sed diam eget tempus. Vestibulum fringilla egestas nulla, at bibendum odio ornare et. Donec a sem quis magna interdum eleifend sit amet ac est. Aenean fringilla augue sit amet luctus commodo. Aliquam iaculis scelerisque lorem non facilisis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse potenti. Aenean dolor nisi, porttitor ut faucibus aliquam, volutpat at arcu.
+
+Curabitur molestie aliquam elit a elementum. Integer at laoreet nunc. Ut vehicula nulla lectus, vitae lacinia nibh tincidunt et. Phasellus commodo urna neque, tincidunt lobortis nibh porta eu. Vestibulum ac fermentum metus, nec dignissim urna. Pellentesque gravida consequat consectetur. Donec sodales ipsum mi, ut tempus nunc ullamcorper convallis. Fusce cursus nisi sed congue sollicitudin. Suspendisse risus libero, laoreet ut magna sit amet, iaculis suscipit tellus.
+
+Nulla nec mi id purus malesuada varius. Maecenas vel nisi at dui congue iaculis. Cras massa ante, dapibus semper pharetra eget, vestibulum vitae sapien. Mauris ac magna vulputate, convallis risus in, mollis enim. Vivamus ac sollicitudin mi. Aenean lacinia justo sed massa ultricies venenatis. Morbi aliquet lobortis magna quis auctor. Nulla sed semper mauris, eu consectetur quam. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Sed eu rutrum lorem. Integer fermentum, velit eget molestie luctus, leo leo viverra mi, aliquet imperdiet lacus metus quis elit. Vivamus eu neque non sapien blandit imperdiet. Mauris pulvinar semper sapien, vel auctor felis tempor id. Maecenas ac ullamcorper purus, sollicitudin blandit diam.
+
+Sed tellus purus, sodales id ante sed, consectetur cursus orci. Nullam at dignissim nulla. Sed varius dui faucibus, mattis mauris sit amet, congue erat. Praesent ut lectus ac arcu accumsan tempor sed a ligula. Quisque et dolor non arcu pharetra volutpat in id mi. Integer at congue justo, rhoncus congue tellus. Suspendisse vitae turpis egestas, euismod enim in, ullamcorper ligula. Curabitur pulvinar sollicitudin suscipit. Aenean auctor neque nibh, id aliquet massa convallis in.
+
+Etiam dolor nisl, ultrices sit amet porta ut, consectetur ac elit. Suspendisse non venenatis tortor. Morbi vitae sollicitudin neque. Duis nec odio ut risus interdum egestas. Mauris lobortis aliquet ipsum, quis ultricies dolor dignissim a. Vivamus hendrerit odio ante, eu vulputate mi euismod non. Sed aliquet non sapien ac rutrum. Ut ac tincidunt mi, at faucibus lorem.
+
+Proin aliquam nulla ut porta semper. Integer feugiat mauris quis aliquam lobortis. Fusce id pretium tortor. Mauris volutpat id ligula eget viverra. Nunc ornare porta posuere. Cras nunc mi, posuere nec felis et, laoreet dignissim metus. Suspendisse semper laoreet sapien, consectetur vestibulum mi dapibus ut. Suspendisse ut sapien eu sapien auctor scelerisque ut sit amet eros. Maecenas scelerisque ac enim at pretium. Morbi dapibus luctus egestas. Sed ac luctus mauris, vitae mollis metus. Aenean sodales sagittis turpis, eget pharetra arcu auctor at. Vestibulum elementum placerat felis, sed molestie tortor placerat eget. Donec sed lacus quis lorem fringilla molestie.
+
+Integer condimentum fringilla lorem vel mattis. Sed rutrum vehicula sapien. Proin id rutrum turpis. Aenean velit sem, hendrerit sit amet magna vitae, adipiscing rutrum nisi. Quisque id mi venenatis, cursus nulla nec, mollis metus. Morbi est velit, pulvinar ac sodales sed, laoreet vitae ante. Morbi massa lacus, porta id pellentesque at, sollicitudin eget odio. Sed luctus erat sit amet aliquam mattis. Suspendisse at porttitor leo. Integer eget nibh et leo venenatis dictum non vitae diam. Vivamus quis libero at sem laoreet vehicula. Duis quis dignissim dui. Nunc ut nibh sit amet ipsum bibendum varius. Cras varius, diam vitae rutrum porta, eros magna ullamcorper neque, ut lobortis turpis dolor vel odio.
+
+Proin malesuada, leo in porta posuere, elit nulla aliquam diam, eget congue erat lacus vestibulum leo. Praesent ornare neque eget elit pellentesque, eget laoreet ligula congue. Aliquam placerat vestibulum velit, eget pellentesque ipsum placerat nec. Praesent fringilla quis nunc eget pharetra. Pellentesque nec mi commodo, convallis ante non, volutpat odio. Nulla congue urna in rutrum lacinia. Nulla facilisi. Integer ultrices ligula eu nunc interdum, in commodo quam euismod. Duis dignissim turpis id ipsum hendrerit pellentesque a in justo. Donec posuere tellus facilisis, feugiat enim quis, porttitor ante. Nullam venenatis, mi ac ullamcorper tempor, diam orci faucibus elit, eu venenatis lectus orci nec urna. Curabitur vitae molestie diam.
+
+Integer at cursus augue, vitae sollicitudin nulla. Nunc elementum velit vel dui luctus, in imperdiet tellus elementum. Aenean ultricies turpis orci, in laoreet sapien gravida non. Fusce vestibulum ante eget mi sodales, a vestibulum mi viverra. Nulla ac congue mi, et dapibus sem. Donec sodales dui id odio hendrerit, id adipiscing mi congue. Vestibulum nulla orci, dignissim pharetra lorem at, lobortis sollicitudin augue. Maecenas sed quam rutrum, sodales nisl et, pellentesque justo. Nam ac lacus felis. Etiam mattis, orci sed congue tempus, felis lacus vehicula dolor, at interdum tortor nisl sed sapien.
+
+Vestibulum auctor id tellus lobortis vehicula. Vivamus mauris sem, suscipit eget iaculis sed, tempus id lectus. Curabitur placerat a quam quis mollis. Ut ut dui aliquet, ornare ipsum faucibus, ultrices tortor. Sed quis tortor consequat, condimentum mauris vel, porta erat. Proin rhoncus volutpat leo, vitae placerat metus dictum vel. Morbi ac quam malesuada, consequat sapien vitae, sollicitudin magna. Cras et odio massa. Aliquam sit amet eleifend sem, rhoncus commodo ante. In vel risus blandit, tincidunt odio et, placerat lectus. Duis scelerisque, velit vitae consectetur vulputate, quam dolor fringilla dolor, quis sollicitudin elit dolor sit amet libero. Quisque rutrum placerat metus, eu rutrum sem rhoncus in. Phasellus sodales tempus tincidunt. Suspendisse porttitor diam ac felis accumsan, sit amet molestie mi imperdiet. Praesent sit amet lectus nisi.
+
+Vestibulum a accumsan ligula. Aliquam tortor nulla, condimentum quis gravida non, aliquam ut justo. Nullam rutrum tellus non mollis fermentum. Quisque quis velit vestibulum, dictum elit sit amet, accumsan metus. Integer vestibulum bibendum varius. Morbi ultricies pharetra velit, quis eleifend nisi convallis a. Nunc sollicitudin, arcu vel sodales aliquam, turpis orci auctor arcu, id venenatis diam eros a neque. Vestibulum iaculis dolor tempus, convallis sapien ut, varius ante. Nunc interdum sollicitudin felis vel congue. Morbi condimentum nulla nec lectus aliquam hendrerit. Maecenas quis odio id mi dignissim egestas. Duis a orci dictum, placerat mi ac, tincidunt augue. Phasellus egestas porta elit, vel suscipit massa aliquam sed. Duis pellentesque ultricies enim a fermentum. Aenean dolor nisi, bibendum et odio ut, euismod pharetra enim. Sed eget tempus nulla, ac pulvinar leo.
+
+Mauris dapibus hendrerit pellentesque. Aliquam vehicula vel lorem et bibendum. Donec id nulla at mi tincidunt lacinia eu eu lorem. Nam et mi varius, convallis augue vitae, eleifend orci. Suspendisse hendrerit nulla sit amet nunc lobortis elementum. Fusce sed turpis eget magna faucibus fringilla et id ipsum. Maecenas nec ligula vitae purus rutrum aliquam et sit amet odio. Aliquam erat volutpat.
+
+Donec sit amet scelerisque odio, sed luctus ligula. Donec ac massa vel enim dapibus accumsan in ac est. Vestibulum egestas, nulla in consectetur sollicitudin, nisl mauris suscipit purus, in scelerisque enim mauris ut arcu. Vestibulum aliquam, purus non consectetur molestie, erat nibh mattis justo, viverra consequat justo nunc sed neque. Duis egestas ut purus sed scelerisque. Maecenas bibendum vulputate dapibus. Phasellus vehicula quam metus, ut malesuada mi pharetra in. Nulla volutpat euismod est, sed viverra tellus condimentum ut.
+
+Pellentesque eget quam vel mi euismod feugiat in a risus. Proin at leo tincidunt elit volutpat fermentum sed at risus. Aenean justo sem, dapibus nec sapien id, condimentum porta ante. Nunc ullamcorper nunc nec dolor congue laoreet. Ut sed ullamcorper sapien, quis tristique erat. Aenean pulvinar ligula urna, quis tempus felis sagittis placerat. Vivamus commodo aliquam erat, nec facilisis tortor. Donec gravida turpis sit amet aliquam consectetur. Aenean cursus nulla eget velit sodales, ut volutpat lacus accumsan. Vivamus nulla lorem, gravida eu dignissim non, ultricies non sem.
+
+Aenean malesuada elit lorem, eget auctor ligula dapibus nec. Morbi at congue ante. Maecenas ac consequat turpis, eget facilisis ante. Sed id sollicitudin justo. Vestibulum tortor odio, accumsan ut metus id, rutrum accumsan ipsum. Quisque sodales dui sed elementum interdum. Pellentesque porta sodales posuere. Vestibulum orci eros, tincidunt id ullamcorper ultricies, dignissim ac lectus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Duis scelerisque, enim et ultrices aliquam, massa ipsum adipiscing ante, id adipiscing mi ipsum in lectus. Nunc elementum tellus sem, a interdum velit sodales vitae. Phasellus vulputate nisi pulvinar mattis tristique. Aliquam vitae risus lectus.
+
+Suspendisse a pretium massa. Aliquam eu nisl rutrum, rutrum tortor quis, viverra nisl. Integer euismod posuere bibendum. Vestibulum quis sodales velit, tempor tincidunt erat. Fusce non commodo felis. Donec tincidunt velit leo, rutrum tempus ligula mattis aliquet. Aenean dictum urna tristique varius posuere.
+
+Vivamus dapibus lacus non vulputate tristique. Etiam mollis dolor lacus. Cras mattis nunc a quam posuere tempus. Maecenas fermentum lectus urna, vel pulvinar ipsum facilisis et. Phasellus tellus lorem, vestibulum et dignissim eu, rhoncus non sem. Suspendisse ut risus in orci porta blandit et quis metus. Vivamus non pulvinar felis.
+
+Duis non congue massa. Praesent et quam sodales, sodales felis sit amet, euismod elit. Maecenas dictum suscipit orci nec venenatis. Nunc consequat venenatis cursus. Nullam diam justo, elementum commodo massa eu, commodo laoreet felis. Nullam auctor est nulla, ut consequat elit laoreet sit amet. Aliquam et vehicula metus. Nullam luctus turpis tortor, eu consectetur lacus pulvinar quis. Aliquam varius posuere libero eu rutrum. Cras id augue lacus. Morbi sagittis interdum ligula at ornare. Nulla interdum libero est, vel adipiscing sapien elementum vitae. Suspendisse ultrices sapien ac mi blandit vulputate. Nulla facilisi.
+
+Duis at dolor est. Donec interdum, tellus vitae facilisis adipiscing, tellus augue rutrum quam, nec volutpat erat nulla ac nibh. Duis ullamcorper suscipit diam, sit amet facilisis purus volutpat vel. Nullam tempus eget ligula et commodo. Donec consectetur, nibh sit amet tempus ornare, lacus sapien fringilla odio, quis commodo lectus sem ut ligula. Morbi eu ante posuere, iaculis ipsum id, iaculis nisi. Sed hendrerit faucibus lacus fringilla porta. Donec scelerisque feugiat mauris, vitae interdum erat laoreet at.
+
+Proin facilisis feugiat nisi, et sollicitudin velit egestas a. Curabitur velit diam, dignissim nec turpis eu, tristique vehicula tellus. Nullam eu erat blandit, rutrum nibh ut, lobortis tellus. Maecenas non eros nisi. Nam justo enim, commodo non lacus a, molestie dignissim quam. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; In massa mi, egestas sit amet orci vel, commodo ullamcorper nulla.
+
+Donec imperdiet tellus sed neque tincidunt dignissim. Sed tempus mollis tincidunt. Mauris vel luctus magna, nec consectetur enim. Morbi in sapien suscipit, aliquet nunc eu, porta quam. Aliquam nec leo eget nisl facilisis aliquam id eu metus. Suspendisse tempus eros elementum, tempor risus molestie, scelerisque eros. Integer at urna consequat, congue leo eget, rhoncus lacus. Pellentesque cursus est id orci sodales iaculis. Donec mattis leo sit amet massa vulputate, sit amet interdum mi feugiat. Donec posuere odio id orci congue venenatis. Sed vitae pharetra mauris, sed venenatis justo. Vivamus in metus placerat lectus condimentum lobortis vel non odio. Morbi ullamcorper tincidunt massa, at iaculis sem. Fusce posuere tortor sit amet lacus hendrerit facilisis. Integer sit amet augue venenatis, commodo orci pretium, facilisis elit. Etiam ut lacus non felis molestie imperdiet.
+
+Aenean sapien mi, dapibus vel molestie in, accumsan at ipsum. Proin pellentesque quam purus, vitae dapibus leo tincidunt id. Vestibulum vestibulum hendrerit arcu, vitae tristique justo hendrerit congue. Praesent et velit convallis, bibendum justo porta, congue diam. Donec ac lacus hendrerit, imperdiet sapien a, adipiscing ligula. Suspendisse ultrices, turpis ac euismod varius, ipsum lectus dignissim sem, a ultrices tortor libero eget libero. In sit amet auctor quam. Integer magna odio, dignissim at ligula non, rutrum sodales tortor. Ut accumsan lorem non nibh porttitor dictum. Cras non tellus non nunc viverra placerat eu nec mi. Suspendisse nec turpis sagittis nisi convallis dictum non in elit. Quisque volutpat ipsum eu urna rhoncus, sit amet varius enim faucibus. Duis eget quam mattis, vehicula leo nec, commodo nisl. Nullam volutpat felis in urna vulputate, in vestibulum ligula varius. Nullam suscipit ut libero vel venenatis. Nullam commodo lacus non velit pulvinar luctus.
+
+In eu pretium sem. Etiam tincidunt nunc eget nisl rutrum pulvinar. Aliquam erat volutpat. Donec eleifend, nulla ac semper eleifend, sem dolor ultrices est, vitae eleifend turpis sapien nec nulla. Pellentesque accumsan odio sem, sed posuere ante posuere sed. Vivamus commodo auctor turpis, et mattis leo auctor sit amet. Cras sollicitudin ipsum id ullamcorper hendrerit. Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam ligula velit, luctus at ultricies quis, scelerisque in nisl. Vivamus in nisi ac mi imperdiet commodo. Proin in faucibus felis, sed volutpat neque. Suspendisse potenti. Pellentesque tempus justo sed tellus tincidunt, vitae tempus neque vulputate. Cras blandit sodales arcu, at consequat metus porttitor in.
+
+Duis sit amet mi sed risus congue rhoncus ut id lacus. Suspendisse lobortis nibh in iaculis rutrum. Cras viverra lacus vel enim varius, blandit aliquam nunc congue. Etiam sit amet dictum mauris. Aenean eleifend sapien ipsum, eget adipiscing sem pharetra quis. Sed enim massa, dictum nec rhoncus quis, laoreet a tortor. In nec volutpat sem. Pellentesque mollis condimentum ipsum, sit amet auctor metus vulputate quis. Morbi interdum congue metus, vitae ornare leo. In faucibus lacus ac ligula interdum, quis vulputate sapien lobortis. Pellentesque mattis auctor lorem non euismod. Donec sed eros ante. Duis et sagittis lorem.
+</body>
+</html>
