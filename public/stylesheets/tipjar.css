@@ -1,0 +1,156 @@
+#tipjar-ribbon {
+  cursor: pointer;
+  position: fixed;
+  display: none;
+  top: -99px;
+  width: 112px;
+  height: 99px;
+  right: 20px;
+  background: url(../images/ribbon.png);
+  transition-property: top;
+  transition-duration: 0.2s;
+}
+  #tipjar-ribbon.show {
+    display: block;
+    top: -10px;
+  }
+  #tipjar-ribbon:hover {
+    top: 0;
+  }
+
+  #tipjar-ribbon #hide_tipjar_btn {
+    position: absolute;
+    right: 10px;
+    top: -20px;
+    cursor: pointer;
+  }
+
+
+#tipjar-wrapper {
+  position:fixed;
+  bottom:0;
+  left:50%;
+  margin-left: -450px;
+  width:900px;
+  height:140px;
+  background: url(../images/frame.png) no-repeat 0 0;
+  font-family:'Lucida Grande','Lucida Sans Unicode','Lucida Sans',Geneva,Verdana,sans-serif;
+  display:none;
+}
+  #tipjar-wrapper .hide_btn {
+    background: #fff;
+    border: 3px solid #777;
+    width: 20px;
+    height: 20px;
+    display: block;
+    border-radius: 20px;
+    text-align: center;
+    line-height: 18px;
+    cursor: pointer;
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    color: #555;
+    font-size: 11px;
+    text-decoration: none;
+  }
+    #tipjar-wrapper .hide_btn:hover {
+      background: #ddd;
+    }
+
+  #tipjar-wrapper .tipjar_content {
+    width: 840px;
+    padding: 30px 30px 0;
+    color: #222;
+  }
+
+    #tipjar-wrapper .tipjar_content .tipjar_copy {
+      float: left;
+      width: 270px;
+    }
+      .tipjar_copy h3 {
+        font-weight: 700;
+        padding: 0 0 15px;
+        margin: 0;
+      }
+      .tipjar_copy p {
+        margin: 0;
+      }
+
+#tipjar-step-1 {
+
+}
+  #tipjar-step-1 form {
+    float: right;
+    padding: 5px 0 0 0;
+  }
+    #tipjar-step-1 form #dollarsign {
+      position: relative;
+      left: 35px;
+      font-size: 2em;
+      color: #666;
+    }
+
+#tipjar-step-2 {
+  display: none;
+}
+  #tipjar-step-2 form {
+    float: right;
+    padding: 5px 0 0 0;
+  }
+
+#tipjar-step-3 {
+  display: none;
+}
+  #tipjar-step-3 form {
+    float: right;
+    padding: 5px 0 0 0;
+  }
+
+#tipjar-wrapper #tipjar-loader {
+  display: none;
+  width: 900px;
+  height: 140px;
+  background: url(../images/loader.gif?v=2) no-repeat 50% 50%;
+}
+
+#tipjar-wrapper input {
+  outline: none;
+  border: 5px solid #fff;
+  border-radius: 5px;
+  box-shadow: inset 0 0 8px rgba(0,0,0,.1),0 0 16px rgba(0,0,0,.1);
+  padding: 15px;
+  background: rgba(255,255,255,.5);
+  margin: 0 0 10px;
+  width: 180px;
+  font-size: 2em;
+}
+  #tipjar-wrapper input.cf_prepend {
+    padding: 15px 15px 15px 30px !important;
+  }
+
+#tipjar-wrapper .cf_button {
+  outline: none;
+  text-decoration: none;
+  border: 5px solid #fff;
+  border-radius: 5px;
+  box-shadow: inset 0 0 8px rgba(0,0,0,.1), 0 0 16px rgba(0,0,0,.1);
+  padding: 15px;
+  background: green;
+  color: #fff;
+  font-size: 2em;
+  cursor: pointer;
+}
+
+.clearfix:after {
+  content: ".";
+  display: block;
+  clear: both;
+  visibility: hidden;
+  line-height: 0;
+  height: 0;
+}
+
+.clearfix {
+  display: inline-block;
+}
