@@ -5,7 +5,8 @@ CloudFlare.define("dwolla_tipjar",
     window.CF_TIPJAR['SESSION_ID'] = null;
     window.CF_TIPJAR['TIP'] = null;
     window.CF_TIPJAR['API_HOST'] = "https://cloudflare-tipjar.herokuapp.com/";
-    window.CF_TIPJAR['ASSET_HOST'] = "https://cftipjar.s3.amazonaws.com/public/";
+    //window.CF_TIPJAR['ASSET_HOST'] = "https://cftipjar.s3.amazonaws.com/public/";
+    window.CF_TIPJAR['ASSET_HOST'] = "http://mike.dev/public/";
 
     var bind_events = function() {
       // OAuth processor / listener
@@ -14,6 +15,7 @@ CloudFlare.define("dwolla_tipjar",
       // Cache elements
       var tipjar = $('#tipjar-wrapper');
       var tipjar_ribbon = $('#tipjar-ribbon');
+      var oauth = $('#cftipjar-oauth');
 
       window.CF_TIPJAR['ELEMENTS'] = {
         'tipjar_ribbon': tipjar_ribbon,
@@ -23,7 +25,9 @@ CloudFlare.define("dwolla_tipjar",
         'step_1': tipjar.find('#tipjar-step-1'),
         'step_2': tipjar.find('#tipjar-step-2'),
         'step_3': tipjar.find('#tipjar-step-3'),
-        'loader': tipjar.find('#tipjar-loader')
+        'loader': tipjar.find('#tipjar-loader'),
+        'oauth': oauth,
+        'iframe': oauth.find('iframe')
       }
 
       window.CF_TIPJAR['ELEMENTS']['tipjar_ribbon']
@@ -43,6 +47,9 @@ CloudFlare.define("dwolla_tipjar",
 
       window.CF_TIPJAR['ELEMENTS']['step_3']
         .find('button').click(hideTipjar).end();
+
+      window.CF_TIPJAR['ELEMENTS']['oauth']
+        .find('.hide_btn').click(closeOauth).end();
 
       // Capture Enter key for input fields
       window.CF_TIPJAR['ELEMENTS']['amount'].keypress(submitOauthForm);
@@ -117,14 +124,21 @@ CloudFlare.define("dwolla_tipjar",
       // store tip amount for later
       window.CF_TIPJAR['TIP'] = window.CF_TIPJAR['ELEMENTS']['amount'].val()
 
-      $.magnificPopup.open({
-        items: {
-          src: window.CF_TIPJAR['API_HOST'] + "start_oauth?domain=" + window.location.host
-        },
-        type: 'iframe'
-      });
+      window.CF_TIPJAR['ELEMENTS']['iframe'].attr('src', window.CF_TIPJAR['API_HOST'] + "start_oauth?domain=" + window.location.host);
+      window.CF_TIPJAR['ELEMENTS']['oauth'].show();
 
       return;
+    }
+
+    var closeOauth = function(e) {
+      if(e) { e.preventDefault(); }
+
+      window.CF_TIPJAR['ELEMENTS']['oauth'].hide();
+      hideLoader();
+
+      window.CF_TIPJAR['ELEMENTS']['step_1'].show();
+
+      return false;
     }
 
     var finishOAuth = function(event) {
@@ -134,13 +148,10 @@ CloudFlare.define("dwolla_tipjar",
       var session_id = event.data.session_id;
       if (!session_id) return;
 
-      $.magnificPopup.close();
+      closeOauth();
 
       // store session ID for sendPayment()
       window.CF_TIPJAR['SESSION_ID'] = session_id;
-
-      // transition to confirm screen
-      hideLoader();
 
       window.CF_TIPJAR['ELEMENTS']['step_1'].hide();
       window.CF_TIPJAR['ELEMENTS']['step_2'].show();
@@ -231,9 +242,7 @@ CloudFlare.define("dwolla_tipjar",
     }
 
     var loadCSS = function() {
-      $('head')
-        .append('<link type="text/css" rel="stylesheet" href="' + window.CF_TIPJAR['ASSET_HOST'] + 'stylesheets/tipjar.css" media="all">')
-        .append('<link type="text/css" rel="stylesheet" href="' + window.CF_TIPJAR['ASSET_HOST'] + 'stylesheets/external.css" media="all">')
+      $('head').append('<link type="text/css" rel="stylesheet" href="' + window.CF_TIPJAR['ASSET_HOST'] + 'stylesheets/tipjar.css" media="all">');
     }
 
     var loadHTML = function(callback) {
@@ -245,9 +254,6 @@ CloudFlare.define("dwolla_tipjar",
     }
 
     var initialize = function() {
-      // Load external scripts
-      $.getScript( "http://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/0.8.9/jquery.magnific-popup.min.js", function() {});
-
       // Inject DOM Elements
       loadCSS();
       loadHTML(bind_events);

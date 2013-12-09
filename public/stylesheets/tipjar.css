@@ -1,4 +1,75 @@
-#tipjar-ribbon {
+#cftipjar-oauth {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+  #cftipjar-oauth #cftipjar-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+  }
+
+  #cftipjar-oauth .hide_btn {
+    position: absolute;
+    left: 40%;
+    margin-left: 550px;
+    top: 50%;
+    margin-top: -265px;
+    z-index: 3000;
+
+    background: #fff;
+    border: 3px solid #777;
+    width: 20px;
+    height: 20px;
+    display: block;
+    border-radius: 20px;
+    text-align: center;
+    cursor: pointer;
+    color: #555;
+
+    line-height: 18px;
+    font-size: 18px;
+    font-weight: normal;
+    text-decoration: none;
+  }
+    #cftipjar-oauth .hide_btn:hover {
+      background: #ddd;
+    }
+
+  #cftipjar-oauth iframe {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 900px;
+    height: 500px;
+    margin-left: -450px;
+    margin-top: -250px;
+    z-index: 2000;
+    background: #000;
+  }
+
+#cftipjar, #cftipjar *, #cftipjar *:before, #cftipjar *:after {
+  border: 0;
+  outline: none;
+  box-shadow: none;
+  transition: none;
+  font-family: 'Lucida Grande','Lucida Sans Unicode','Lucida Sans',Geneva,Verdana,sans-serif;
+  text-transform: none;
+  text-decoration: none;
+
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+#cftipjar #tipjar-ribbon {
   cursor: pointer;
   position: fixed;
   display: none;
@@ -10,15 +81,15 @@
   transition-property: top;
   transition-duration: 0.2s;
 }
-  #tipjar-ribbon.show {
+  #cftipjar #tipjar-ribbon.show {
     display: block;
     top: -10px;
   }
-  #tipjar-ribbon:hover {
+  #cftipjar #tipjar-ribbon:hover {
     top: 0;
   }
 
-  #tipjar-ribbon #hide_tipjar_btn {
+  #cftipjar #tipjar-ribbon #hide_tipjar_btn {
     position: absolute;
     right: 10px;
     top: -20px;
@@ -26,7 +97,7 @@
   }
 
 
-#tipjar-wrapper {
+#cftipjar #tipjar-wrapper {
   position:fixed;
   bottom:0;
   left:50%;
@@ -36,8 +107,9 @@
   background: url(../images/frame.png) no-repeat 0 0;
   font-family:'Lucida Grande','Lucida Sans Unicode','Lucida Sans',Geneva,Verdana,sans-serif;
   display:none;
+  overflow: visible !important;
 }
-  #tipjar-wrapper .hide_btn {
+  #cftipjar #tipjar-wrapper .hide_btn {
     background: #fff;
     border: 3px solid #777;
     width: 20px;
@@ -45,104 +117,138 @@
     display: block;
     border-radius: 20px;
     text-align: center;
-    line-height: 18px;
+    line-height: 11px;
     cursor: pointer;
     position: absolute;
-    top: -5px;
-    right: -5px;
+    top: -2px;
+    right: 0;
     color: #555;
     font-size: 11px;
+    font-weight: normal;
     text-decoration: none;
   }
-    #tipjar-wrapper .hide_btn:hover {
+    #cftipjar #tipjar-wrapper .hide_btn:hover {
       background: #ddd;
     }
 
-  #tipjar-wrapper .tipjar_content {
-    width: 840px;
+  #cftipjar #tipjar-wrapper .tipjar_content {
+    width: 900px;
     padding: 30px 30px 0;
     color: #222;
   }
 
-    #tipjar-wrapper .tipjar_content .tipjar_copy {
+    #cftipjar #tipjar-wrapper .tipjar_content .tipjar_copy {
       float: left;
       width: 270px;
     }
-      .tipjar_copy h3 {
+      #cftipjar .tipjar_copy h3 {
         font-weight: 700;
         padding: 0 0 15px;
         margin: 0;
+
+        text-transform: none;
+        font-size: 19px;
+        line-height: 19px;
+        font-family: 'Lucida Grande','Lucida Sans Unicode','Lucida Sans',Geneva,Verdana,sans-serif;
+        color: #111;
       }
-      .tipjar_copy p {
+      #cftipjar .tipjar_copy p {
         margin: 0;
+        padding: 0;
+
+        text-transform: none;
+        font-family: 'Lucida Grande','Lucida Sans Unicode','Lucida Sans',Geneva,Verdana,sans-serif;
+        font-weight: normal;
+        line-height: 18px;
+        font-size: 15px;
+        color: #333;
       }
 
-#tipjar-step-1 {
+    #cftipjar #tipjar-wrapper .tipjar_content form {
+      position: relative;
+      float: right;
+      padding: 5px 0 0 0;
+      margin: 0;
+      width: 400px;
+    }
+
+#cftipjar #tipjar-step-1 {
 
 }
-  #tipjar-step-1 form {
-    float: right;
-    padding: 5px 0 0 0;
+  #cftipjar #tipjar-step-1 form {
+
   }
-    #tipjar-step-1 form #dollarsign {
-      position: relative;
-      left: 35px;
-      font-size: 2em;
+    #cftipjar #tipjar-step-1 form #dollarsign {
+      position: absolute;
+      top: 25px;
+      left: 114px;
+      z-index: 1000;
+      font-family: 'Lucida Grande','Lucida Sans Unicode','Lucida Sans',Geneva,Verdana,sans-serif;
+      font-size: 30px;
+      font-weight: normal;
+      padding: 0;
+      margin: 0;
       color: #666;
     }
 
-#tipjar-step-2 {
+#cftipjar #tipjar-step-2 {
   display: none;
 }
-  #tipjar-step-2 form {
-    float: right;
-    padding: 5px 0 0 0;
+  #cftipjar #tipjar-step-2 form {
+
   }
 
-#tipjar-step-3 {
+#cftipjar #tipjar-step-3 {
   display: none;
 }
-  #tipjar-step-3 form {
-    float: right;
-    padding: 5px 0 0 0;
+  #cftipjar #tipjar-step-3 form {
+
   }
 
-#tipjar-wrapper #tipjar-loader {
+#cftipjar #tipjar-wrapper #tipjar-loader {
   display: none;
   width: 900px;
   height: 140px;
   background: url(../images/loader.gif?v=2) no-repeat 50% 50%;
 }
 
-#tipjar-wrapper input {
+#cftipjar #tipjar-wrapper input {
   outline: none;
   border: 5px solid #fff;
   border-radius: 5px;
   box-shadow: inset 0 0 8px rgba(0,0,0,.1),0 0 16px rgba(0,0,0,.1);
-  padding: 15px;
   background: rgba(255,255,255,.5);
-  margin: 0 0 10px;
+  padding: 15px;
+  margin: 0 7px 0 0;
   width: 180px;
-  font-size: 2em;
+  color: #000;
+  font-weight: normal;
+  font-size: 30px;
+  font-family: 'Lucida Grande','Lucida Sans Unicode','Lucida Sans',Geneva,Verdana,sans-serif;
+  float: right;
 }
-  #tipjar-wrapper input.cf_prepend {
+  #cftipjar #tipjar-wrapper input.cf_prepend {
     padding: 15px 15px 15px 30px !important;
   }
 
-#tipjar-wrapper .cf_button {
+#cftipjar #tipjar-wrapper .cf_button {
   outline: none;
   text-decoration: none;
   border: 5px solid #fff;
   border-radius: 5px;
   box-shadow: inset 0 0 8px rgba(0,0,0,.1), 0 0 16px rgba(0,0,0,.1);
   padding: 15px;
+  margin: 0;
   background: green;
   color: #fff;
-  font-size: 2em;
+  font-size: 30px;
+  font-family: 'Lucida Grande','Lucida Sans Unicode','Lucida Sans',Geneva,Verdana,sans-serif;
+  font-weight: normal;
   cursor: pointer;
+  float: right;
 }
 
-.clearfix:after {
+.cftipjar_clearfix:after {
   content: ".";
   display: block;
   clear: both;
@@ -151,6 +257,14 @@
   height: 0;
 }
 
-.clearfix {
+.cftipjar_clearfix {
   display: inline-block;
+}
+
+html[xmlns] .cftipjar_clearfix {
+  display: block;
+}
+
+* html .cftipjar_clearfix {
+  height: 1%;
 }

@@ -1,24 +1,21 @@
 {
   "name": "Dwolla Tipjar",
   "description": "Accept monetary contributions from your grateful visitors",
-  "version": "0.5",
+  "version": "0.6",
   "category": "loyalty programs",
   "main": "public/javascripts/tipjar.js",
-  "config":{
-    "details":{
+  "config": {
+    "details": {
       "Language": "English",
       "Price": "Free",
       "Restrictions": "None",
       "TOS":"http://www.cloudflare.com/terms"
     },
-    "assets":{
+    "assets": {
      "logos" : {
         "200px": "./public/images/logo-200.png",
         "132px": "./public/images/logo-132.png"
-      },
-      "images" : [
-        "./public/images/tipjar.png"
-      ]
+      }
     },
     "interface": [
         {
