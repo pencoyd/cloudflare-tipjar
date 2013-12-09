@@ -5,8 +5,7 @@ CloudFlare.define("dwolla_tipjar",
     window.CF_TIPJAR['SESSION_ID'] = null;
     window.CF_TIPJAR['TIP'] = null;
     window.CF_TIPJAR['API_HOST'] = "https://cloudflare-tipjar.herokuapp.com/";
-    //window.CF_TIPJAR['ASSET_HOST'] = "https://cftipjar.s3.amazonaws.com/public/";
-    window.CF_TIPJAR['ASSET_HOST'] = "http://mike.dev/public/";
+    window.CF_TIPJAR['ASSET_HOST'] = "https://cftipjar.s3.amazonaws.com/public/";
 
     var bind_events = function() {
       // OAuth processor / listener
