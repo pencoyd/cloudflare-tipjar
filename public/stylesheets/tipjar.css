@@ -55,7 +55,7 @@
     background: #000;
   }
 
-#cftipjar, #cftipjar *, #cftipjar *:before, #cftipjar *:after {
+#cftipjar-oauth, #cftipjar-oauth *, #cftipjar-oauth *:before, #cftipjar-oauth *:after, #cftipjar, #cftipjar *, #cftipjar *:before, #cftipjar *:after {
   border: 0;
   outline: none;
   box-shadow: none;
