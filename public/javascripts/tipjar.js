@@ -2,6 +2,7 @@ CloudFlare.define("dwolla_tipjar",
   ["dwolla_tipjar/config", "cloudflare/jquery1.7"],
   function(config, $) {
     window.CF_TIPJAR = {};
+    window.CF_TIPJAR['VERSION'] = '0.9';
     window.CF_TIPJAR['SESSION_ID'] = null;
     window.CF_TIPJAR['TIP'] = null;
     window.CF_TIPJAR['API_HOST'] = "https://cloudflare-tipjar.herokuapp.com/";
@@ -141,13 +142,13 @@ CloudFlare.define("dwolla_tipjar",
     }
 
     var finishOAuth = function(event) {
+      closeOauth();
+
       // event listener, listens for message from oauth iframe.
       // When triggered, stores session id and closes iframe
       // then updates tipjar frame with PIN form
       var session_id = event.data.session_id;
       if (!session_id) return;
-
-      closeOauth();
 
       // store session ID for sendPayment()
       window.CF_TIPJAR['SESSION_ID'] = session_id;
