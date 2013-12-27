@@ -15,35 +15,6 @@
     background: rgba(0,0,0,0.5);
     z-index: 1000;
   }
-
-  #cftipjar-oauth .hide_btn {
-    position: absolute;
-    left: 40%;
-    margin-left: 560px;
-    top: 50%;
-    margin-top: -265px;
-    z-index: 3000;
-
-    background: #fff;
-    border: 3px solid #777;
-    width: 20px;
-    height: 20px;
-    display: block;
-    border-radius: 20px;
-    text-align: center;
-    cursor: pointer;
-    color: #555;
-
-    line-height: 11px;
-    font-size: 11px;
-    font-family: 'Lucida Grande','Lucida Sans Unicode','Lucida Sans',Geneva,Verdana,sans-serif;
-    font-weight: normal;
-    text-decoration: none;
-  }
-    #cftipjar-oauth .hide_btn:hover {
-      background: #ddd;
-    }
-
   #cftipjar-oauth iframe {
     position: absolute;
     top: 50%;
@@ -70,107 +41,133 @@
   box-sizing: border-box;
 }
 
+#cftipjar {
+  position: fixed;
+  bottom: 0;
+  right: 20px;
+  transition-property: bottom;
+  transition-duration: 0.3s;
+}
+  #cftipjar.hidden:hover {
+    bottom: 10px;
+  }
+  #cftipjar.show {
+    bottom: 280px;
+  }
+  #cftipjar.disabled {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
 #cftipjar #tipjar-ribbon {
   cursor: pointer;
-  position: fixed;
-  display: none;
-  top: -99px;
-  width: 112px;
-  height: 99px;
-  right: 20px;
-  background: url(../images/ribbon.png);
-  transition-property: top;
-  transition-duration: 0.2s;
+  position: absolute;
+  bottom: -6px;
+  right: -1px;
+  z-index: 10000;
+  background: #ff7404;
+  border-radius: 4px 4px 0 0;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #fff;
+  box-shadow: rgba(0,0,0,0.25) 0 -1px 4px;
 }
-  #cftipjar #tipjar-ribbon.show {
-    display: block;
-    top: -10px;
-  }
-  #cftipjar #tipjar-ribbon:hover {
-    top: 0;
-  }
-
-  #cftipjar #tipjar-ribbon #hide_tipjar_btn {
+  #cftipjar #tipjar-ribbon:before {
+    content: "";
     position: absolute;
-    right: 10px;
-    top: -20px;
-    cursor: pointer;
+    width: 100%;
+    background: #FF7404;
+    height: 5px;
+    bottom: 0px;
+    left: -5px;
   }
-
+  #cftipjar #tipjar-ribbon:after {
+    content: "";
+    position: absolute;
+    width: 5px;
+    background: #FF7404;
+    height: 50px;
+    top: 0px;
+    right: 0px;
+  }
+  #cftipjar #tipjar-ribbon .hide, #cftipjar #tipjar-ribbon .show {
+    display: none;
+  }
+    #cftipjar.hidden #tipjar-ribbon .show {
+      display: block;
+    }
+    #cftipjar.show #tipjar-ribbon .hide {
+      display: block;
+    }
+  #cftipjar #tipjar-ribbon p {
+    text-align: center;
+    color: #fff;
+    white-space: nowrap;
+  }
+  #cftipjar #tipjar-ribbon .show p {
+    background: url(../images/dwolla-tip-icon.png) no-repeat 15px 0;
+    padding: 0px 20px 0 40px;
+    font-size: 14px;
+  }
+  #cftipjar #tipjar-ribbon .hide p {
+    font-size: 12px;
+    padding: 0px 15px;
+  }
 
 #cftipjar #tipjar-wrapper {
-  position:fixed;
-  bottom:0;
-  left:50%;
-  margin-left: -450px;
-  width:900px;
-  height:140px;
-  background: url(../images/frame.png) no-repeat 0 0;
-  font-family:'Lucida Grande','Lucida Sans Unicode','Lucida Sans',Geneva,Verdana,sans-serif;
-  display:none;
-  overflow: visible !important;
+  position: absolute;
+  right: 0;
+  bottom: -280px;
+  width: 275px;
+  height: 280px;
+  background: #eceef1;
+  color: #4d5659;
+  font-family: 'Lucida Grande','Lucida Sans Unicode','Lucida Sans',Geneva,Verdana,sans-serif;
+
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #fff;
+  box-shadow: rgba(0,0,0,0.25) 0 -1px 4px;
+  border-radius: 3px;
 }
-  #cftipjar #tipjar-wrapper .hide_btn {
-    background: #fff;
-    border: 3px solid #777;
-    width: 20px;
-    height: 20px;
-    display: block;
-    border-radius: 20px;
-    text-align: center;
-    line-height: 11px;
-    cursor: pointer;
-    position: absolute;
-    top: -2px;
-    right: 0;
-    color: #555;
-    font-size: 11px;
-    font-weight: normal;
-    text-decoration: none;
+  #cftipjar #tipjar-wrapper .tipjar_content, #cftipjar #tipjar-wrapper #tipjar-loader {
+    border-top: 5px solid #ff7404;
+    border-left: 5px solid #ff7404;
+    border-right: 5px solid #ff7404;
+    padding: 15px 15px 0;
+    border-radius: 3px 3px 0 0;
+    height: 100%;
   }
-    #cftipjar #tipjar-wrapper .hide_btn:hover {
-      background: #ddd;
-    }
-
-  #cftipjar #tipjar-wrapper .tipjar_content {
-    width: 900px;
-    padding: 30px 30px 0;
-    color: #222;
-  }
-
     #cftipjar #tipjar-wrapper .tipjar_content .tipjar_copy {
-      float: left;
-      width: 270px;
+
     }
       #cftipjar .tipjar_copy h3 {
-        font-weight: 700;
+        font-weight: 300;
         padding: 0 0 15px;
         margin: 0;
 
         text-transform: none;
-        font-size: 19px;
-        line-height: 19px;
-        font-family: 'Lucida Grande','Lucida Sans Unicode','Lucida Sans',Geneva,Verdana,sans-serif;
-        color: #111;
+        font-size: 21px;
+        line-height: 21px;
+        font-family: 'Open Sans', sans-serif;
+        color: #4d5659;
       }
       #cftipjar .tipjar_copy p {
         margin: 0;
         padding: 0;
 
         text-transform: none;
-        font-family: 'Lucida Grande','Lucida Sans Unicode','Lucida Sans',Geneva,Verdana,sans-serif;
+        font-family: 'Helvetica';
         font-weight: normal;
         line-height: 18px;
-        font-size: 15px;
-        color: #333;
+        font-size: 14px;
+        color: #4d5659;
       }
 
     #cftipjar #tipjar-wrapper .tipjar_content form {
       position: relative;
-      float: right;
-      padding: 5px 0 0 0;
+      padding: 15px 0 0 0;
       margin: 0;
-      width: 400px;
     }
 
 #cftipjar #tipjar-step-1 {
@@ -179,18 +176,17 @@
   #cftipjar #tipjar-step-1 form {
 
   }
-    #cftipjar #tipjar-step-1 form #dollarsign {
-      position: absolute;
-      top: 29px;
-      left: 114px;
-      z-index: 1000;
-      font-family: 'Lucida Grande','Lucida Sans Unicode','Lucida Sans',Geneva,Verdana,sans-serif;
-      font-size: 30px;
-      font-weight: normal;
-      padding: 0;
-      margin: 0;
-      color: #666;
-    }
+  #cftipjar #tipjar-step-1 p.small {
+    margin: 0;
+    padding: 0;
+    text-transform: none;
+    font-family: 'Helvetica';
+    font-weight: normal;
+    line-height: 12px;
+    font-size: 12px;
+    color: #4d5659;
+    text-align: center;
+  }
 
 #cftipjar #tipjar-step-2 {
   display: none;
@@ -208,47 +204,46 @@
 
 #cftipjar #tipjar-wrapper #tipjar-loader {
   display: none;
-  width: 900px;
-  height: 140px;
+  width: 100%;
+  height: 280px;
   background: url(../images/loader.gif?v=2) no-repeat 50% 50%;
 }
 
 #cftipjar #tipjar-wrapper input {
+  display: block;
+  width: 100%;
   outline: none;
-  border: 5px solid #fff;
+  border: 1px solid #b0b4b6;
   border-radius: 5px;
-  box-shadow: inset 0 0 8px rgba(0,0,0,.1),0 0 16px rgba(0,0,0,.1);
-  background: rgba(255,255,255,.5);
+  background: #fff;
   padding: 15px;
-  margin: 0 7px 0 0;
-  width: 180px;
-  height: 75px;
-  color: #000;
-  font-weight: normal;
-  font-size: 30px;
-  font-family: 'Lucida Grande','Lucida Sans Unicode','Lucida Sans',Geneva,Verdana,sans-serif;
-  float: right;
+  margin: 0 0 10px 0;
+  color: #4d5659;
+  font-weight: 300;
+  font-size: 21px;
+  font-family: 'Open Sans', sans-serif;
 }
-  #cftipjar #tipjar-wrapper input.cf_prepend {
-    padding: 15px 15px 15px 30px !important;
+  #cftipjar #tipjar-wrapper input.cf_dollar {
+    padding-left: 30px;
+    background: #fff url(../images/dollar.png?v=2) no-repeat 14px 50%;
   }
 
 #cftipjar #tipjar-wrapper .cf_button {
+  display: block;
+  width: 100%;
   outline: none;
   text-decoration: none;
-  border: 5px solid #fff;
+  border: 0;
   border-radius: 5px;
-  box-shadow: inset 0 0 8px rgba(0,0,0,.1), 0 0 16px rgba(0,0,0,.1);
-  padding: 15px;
-  height: 75px;
-  margin: 0;
-  background: green;
+  padding: 10px 0;
+  margin: 0 0 10px;
+  background: #ff7404;
   color: #fff;
-  font-size: 30px;
-  font-family: 'Lucida Grande','Lucida Sans Unicode','Lucida Sans',Geneva,Verdana,sans-serif;
-  font-weight: normal;
+  font-size: 14px;
+  text-align: center;
+  font-family: 'Helvetica';
+  font-weight: bold;
   cursor: pointer;
-  float: right;
 }
 
 .cftipjar_clearfix:after {
@@ -270,4 +265,13 @@ html[xmlns] .cftipjar_clearfix {
 
 * html .cftipjar_clearfix {
   height: 1%;
+}
+
+@media only screen and (max-width: 650px) {
+  #cftipjar-oauth iframe {
+    width: 300px;
+    height: 400px;
+    margin-left: -150px;
+    margin-top: -200px;
+  }
 }

@@ -2,7 +2,7 @@ CloudFlare.define("dwolla_tipjar",
   ["dwolla_tipjar/config", "cloudflare/jquery1.7"],
   function(config, $) {
     window.CF_TIPJAR = {};
-    window.CF_TIPJAR['VERSION'] = '0.9';
+    window.CF_TIPJAR['VERSION'] = '0.9.1';
     window.CF_TIPJAR['SESSION_ID'] = null;
     window.CF_TIPJAR['TIP'] = null;
     window.CF_TIPJAR['API_HOST'] = "https://cloudflare-tipjar.herokuapp.com/";
@@ -13,11 +13,13 @@ CloudFlare.define("dwolla_tipjar",
       window.addEventListener("message", finishOAuth, false);
 
       // Cache elements
+      var tipjar_container = $('#cftipjar');
       var tipjar = $('#tipjar-wrapper');
       var tipjar_ribbon = $('#tipjar-ribbon');
       var oauth = $('#cftipjar-oauth');
 
       window.CF_TIPJAR['ELEMENTS'] = {
+        'container': tipjar_container,
         'tipjar_ribbon': tipjar_ribbon,
         'tipjar': tipjar,
         'amount': tipjar.find('form input[name="tipjar_amount"]'),
@@ -31,11 +33,9 @@ CloudFlare.define("dwolla_tipjar",
       }
 
       window.CF_TIPJAR['ELEMENTS']['tipjar_ribbon']
-        .click(displayTipjar)
-        .find(".hide_btn").click(hideTipjarRibbon).end();
+        .click(toggleTipjar);
 
       window.CF_TIPJAR['ELEMENTS']['tipjar']
-        .find('.hide_btn').click(hideTipjar).end()
         .find('form')
           .on('submit', function(e) { e.preventDefault(); return false; })
 
@@ -49,7 +49,7 @@ CloudFlare.define("dwolla_tipjar",
         .find('button').click(hideTipjar).end();
 
       window.CF_TIPJAR['ELEMENTS']['oauth']
-        .find('.hide_btn').click(closeOauth).end();
+        .find('#cftipjar-backdrop').click(closeOauth).end();
 
       // Capture Enter key for input fields
       window.CF_TIPJAR['ELEMENTS']['amount'].keypress(submitOauthForm);
@@ -59,14 +59,14 @@ CloudFlare.define("dwolla_tipjar",
         total_visits = logVisit();
 
         if (total_visits >= parseInt(config.visit_threshold)) {
-          displayTipjarRibbon();
+          enableTipjar();
         }
       }
       else if (config.display_mode == "time") {
         startTimer(parseInt(config.time_threshold));
       }
       else if (config.display_mode == "always") {
-        displayTipjarRibbon();
+        enableTipjar();
       }
     }
 
@@ -126,6 +126,13 @@ CloudFlare.define("dwolla_tipjar",
 
       window.CF_TIPJAR['ELEMENTS']['iframe'].attr('src', window.CF_TIPJAR['API_HOST'] + "start_oauth?domain=" + window.location.host);
       window.CF_TIPJAR['ELEMENTS']['oauth'].show();
+
+      $(document).bind('keyup.dialog', function(e) {
+        if (e.keyCode == 27) {
+          closeOauth();
+          $(document).unbind('keyup.dialog');
+        }
+      })
 
       return;
     }
@@ -199,30 +206,27 @@ CloudFlare.define("dwolla_tipjar",
       });
     }
 
-    var hideTipjarRibbon = function() {
-      window.CF_TIPJAR['ELEMENTS']['tipjar_ribbon'].removeClass('show');
-    }
-
-    var displayTipjarRibbon = function() {
-      window.CF_TIPJAR['ELEMENTS']['tipjar_ribbon'].addClass('show');
+    var enableTipjar = function() {
+      window.CF_TIPJAR['ELEMENTS']['container'].removeClass('disabled');
     }
 
     var startTimer = function(time) {
       // waits time seconds before displaying tipjar
-      setTimeout(displayTipjarRibbon, 1000 * time);
+      setTimeout(enableTipjar, 1000 * time);
     }
 
     var hideTipjar = function() {
-      hideTipjarRibbon();
-      window.CF_TIPJAR['ELEMENTS']['tipjar'].slideUp();
+      window.CF_TIPJAR['ELEMENTS']['container']
+        .addClass('disabled');
 
       // hide tipjar forever, if using visits mode:
       setVisits(-1);
     }
 
-    var displayTipjar = function() {
-      hideTipjarRibbon();
-      window.CF_TIPJAR['ELEMENTS']['tipjar'].slideDown();
+    var toggleTipjar = function() {
+      window.CF_TIPJAR['ELEMENTS']['container']
+        .toggleClass('hidden')
+        .toggleClass('show');
     }
 
     var getVisits = function() {
@@ -242,7 +246,9 @@ CloudFlare.define("dwolla_tipjar",
     }
 
     var loadCSS = function() {
-      $('head').append('<link type="text/css" rel="stylesheet" href="' + window.CF_TIPJAR['ASSET_HOST'] + 'stylesheets/tipjar.css" media="all">');
+      $('head')
+        .append('<link type="text/css" rel="stylesheet" href="' + window.CF_TIPJAR['ASSET_HOST'] + 'stylesheets/tipjar.css" media="all">')
+        .append('<link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300" media="all">');
     }
 
     var loadHTML = function(callback) {
