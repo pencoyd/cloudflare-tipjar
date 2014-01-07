@@ -1,0 +1,277 @@
+#cftipjar-oauth {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+  #cftipjar-oauth #cftipjar-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+  }
+  #cftipjar-oauth iframe {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 900px;
+    height: 500px;
+    margin-left: -450px;
+    margin-top: -250px;
+    z-index: 2000;
+    background: #fff;
+  }
+
+#cftipjar-oauth, #cftipjar-oauth *, #cftipjar-oauth *:before, #cftipjar-oauth *:after, #cftipjar, #cftipjar *, #cftipjar *:before, #cftipjar *:after {
+  border: 0;
+  outline: none;
+  box-shadow: none;
+  transition: none;
+  font-family: 'Lucida Grande','Lucida Sans Unicode','Lucida Sans',Geneva,Verdana,sans-serif;
+  text-transform: none;
+  text-decoration: none;
+
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+#cftipjar {
+  position: fixed;
+  bottom: 0;
+  right: 20px;
+  transition-property: bottom;
+  transition-duration: 0.3s;
+}
+  #cftipjar.hidden:hover {
+    bottom: 10px;
+  }
+  #cftipjar.show {
+    bottom: 280px;
+  }
+  #cftipjar.disabled {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+#cftipjar #tipjar-ribbon {
+  cursor: pointer;
+  position: absolute;
+  bottom: -6px;
+  right: -1px;
+  z-index: 10000;
+  background: #ff7404;
+  border-radius: 4px 4px 0 0;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #fff;
+  box-shadow: rgba(0,0,0,0.25) 0 -1px 4px;
+}
+  #cftipjar #tipjar-ribbon:before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    background: #FF7404;
+    height: 5px;
+    bottom: 0px;
+    left: -5px;
+  }
+  #cftipjar #tipjar-ribbon:after {
+    content: "";
+    position: absolute;
+    width: 5px;
+    background: #FF7404;
+    height: 50px;
+    top: 0px;
+    right: 0px;
+  }
+  #cftipjar #tipjar-ribbon .hide, #cftipjar #tipjar-ribbon .show {
+    display: none;
+  }
+    #cftipjar.hidden #tipjar-ribbon .show {
+      display: block;
+    }
+    #cftipjar.show #tipjar-ribbon .hide {
+      display: block;
+    }
+  #cftipjar #tipjar-ribbon p {
+    text-align: center;
+    color: #fff;
+    white-space: nowrap;
+  }
+  #cftipjar #tipjar-ribbon .show p {
+    background: url(../images/dwolla-tip-icon.png) no-repeat 15px 0;
+    padding: 0px 20px 0 40px;
+    font-size: 14px;
+  }
+  #cftipjar #tipjar-ribbon .hide p {
+    font-size: 12px;
+    padding: 0px 15px;
+  }
+
+#cftipjar #tipjar-wrapper {
+  position: absolute;
+  right: 0;
+  bottom: -280px;
+  width: 275px;
+  height: 280px;
+  background: #eceef1;
+  color: #4d5659;
+  font-family: 'Lucida Grande','Lucida Sans Unicode','Lucida Sans',Geneva,Verdana,sans-serif;
+
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #fff;
+  box-shadow: rgba(0,0,0,0.25) 0 -1px 4px;
+  border-radius: 3px;
+}
+  #cftipjar #tipjar-wrapper .tipjar_content, #cftipjar #tipjar-wrapper #tipjar-loader {
+    border-top: 5px solid #ff7404;
+    border-left: 5px solid #ff7404;
+    border-right: 5px solid #ff7404;
+    padding: 15px 15px 0;
+    border-radius: 3px 3px 0 0;
+    height: 100%;
+  }
+    #cftipjar #tipjar-wrapper .tipjar_content .tipjar_copy {
+
+    }
+      #cftipjar .tipjar_copy h3 {
+        font-weight: 300;
+        padding: 0 0 15px;
+        margin: 0;
+
+        text-transform: none;
+        font-size: 21px;
+        line-height: 21px;
+        font-family: 'Open Sans', sans-serif;
+        color: #4d5659;
+      }
+      #cftipjar .tipjar_copy p {
+        margin: 0;
+        padding: 0;
+
+        text-transform: none;
+        font-family: 'Helvetica';
+        font-weight: normal;
+        line-height: 18px;
+        font-size: 14px;
+        color: #4d5659;
+      }
+
+    #cftipjar #tipjar-wrapper .tipjar_content form {
+      position: relative;
+      padding: 15px 0 0 0;
+      margin: 0;
+    }
+
+#cftipjar #tipjar-step-1 {
+
+}
+  #cftipjar #tipjar-step-1 form {
+
+  }
+  #cftipjar #tipjar-step-1 p.small {
+    margin: 0;
+    padding: 0;
+    text-transform: none;
+    font-family: 'Helvetica';
+    font-weight: normal;
+    line-height: 12px;
+    font-size: 12px;
+    color: #4d5659;
+    text-align: center;
+  }
+
+#cftipjar #tipjar-step-2 {
+  display: none;
+}
+  #cftipjar #tipjar-step-2 form {
+
+  }
+
+#cftipjar #tipjar-step-3 {
+  display: none;
+}
+  #cftipjar #tipjar-step-3 form {
+
+  }
+
+#cftipjar #tipjar-wrapper #tipjar-loader {
+  display: none;
+  width: 100%;
+  height: 280px;
+  background: url(../images/loader.gif?v=2) no-repeat 50% 50%;
+}
+
+#cftipjar #tipjar-wrapper input {
+  display: block;
+  width: 100%;
+  outline: none;
+  border: 1px solid #b0b4b6;
+  border-radius: 5px;
+  background: #fff;
+  padding: 15px;
+  margin: 0 0 10px 0;
+  color: #4d5659;
+  font-weight: 300;
+  font-size: 21px;
+  font-family: 'Open Sans', sans-serif;
+}
+  #cftipjar #tipjar-wrapper input.cf_dollar {
+    padding-left: 30px;
+    background: #fff url(../images/dollar.png?v=2) no-repeat 14px 50%;
+  }
+
+#cftipjar #tipjar-wrapper .cf_button {
+  display: block;
+  width: 100%;
+  outline: none;
+  text-decoration: none;
+  border: 0;
+  border-radius: 5px;
+  padding: 10px 0;
+  margin: 0 0 10px;
+  background: #ff7404;
+  color: #fff;
+  font-size: 14px;
+  text-align: center;
+  font-family: 'Helvetica';
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.cftipjar_clearfix:after {
+  content: ".";
+  display: block;
+  clear: both;
+  visibility: hidden;
+  line-height: 0;
+  height: 0;
+}
+
+.cftipjar_clearfix {
+  display: inline-block;
+}
+
+html[xmlns] .cftipjar_clearfix {
+  display: block;
+}
+
+* html .cftipjar_clearfix {
+  height: 1%;
+}
+
+@media only screen and (max-width: 650px) {
+  #cftipjar-oauth iframe {
+    width: 300px;
+    height: 400px;
+    margin-left: -150px;
+    margin-top: -200px;
+  }
+}

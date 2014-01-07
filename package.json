@@ -1,0 +1,19 @@
+{
+  "name": "cloudflare-tipjar",
+  "version": "0.10.1",
+  "engines": {
+    "node": "0.10.12",
+    "npm": "1.2.30"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-contrib-copy": "~0.5.0",
+    "grunt-contrib-clean": "~0.5.0",
+    "matchdep": "~0.3.0",
+    "grunt-contrib-imagemin": "~0.4.0",
+    "grunt-banner": "~0.2.0",
+    "grunt-bump": "0.0.13",
+    "grunt-aws-s3": "~0.7.2",
+    "grunt-string-replace": "~0.2.7"
+  }
+}
