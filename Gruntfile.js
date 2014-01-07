@@ -105,10 +105,16 @@ module.exports = function(grunt) {
     'string-replace': {
       dist: {
         options: {
-          replacements: [{
-            pattern: 'http://mike.dev/public/',
-            replacement: 'https://cftipjar.s3.amazonaws.com/dist/public/',
-          }]
+          replacements: [
+            {
+              pattern: 'http://mike.dev/public/',
+              replacement: 'https://cftipjar.s3.amazonaws.com/dist/public/',
+            },
+            {
+              pattern: '//VERSION//',
+              replacement: '<%= pkg.version %>'
+            }
+          ]
         },
         files: [{
           src: '<%= project.dist %>public/javascripts/tipjar.js',

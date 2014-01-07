@@ -2,7 +2,7 @@ CloudFlare.define("dwolla_tipjar",
   ["dwolla_tipjar/config", "cloudflare/jquery1.7"],
   function(config, $) {
     window.CF_TIPJAR = {};
-    window.CF_TIPJAR['VERSION'] = '0.10';
+    window.CF_TIPJAR['VERSION'] = '//VERSION//';
     window.CF_TIPJAR['SESSION_ID'] = null;
     window.CF_TIPJAR['TIP'] = null;
     window.CF_TIPJAR['API_HOST'] = "https://cloudflare-tipjar.herokuapp.com/";
