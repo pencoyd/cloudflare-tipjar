@@ -1,5 +1,7 @@
 # DwollaLabs Cloudfalre Tipjar
 
+An app that lets visitors tip the content creator using Dwolla's OAuth API.
+
 ## Reqs
 You must create an `aws-keys.json` file in your root directory, and add the appropriate AWS key and secret.
 
