@@ -1,7 +1,7 @@
 {
   "name": "Dwolla Tipjar",
   "description": "Accept monetary contributions from your grateful visitors",
-  "version": "0.10.8",
+  "version": "0.10.9",
   "category": "loyalty programs",
   "main": "dist/public/javascripts/tipjar.js",
   "config": {
