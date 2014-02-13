@@ -26,7 +26,7 @@
         "options": [
             {
               "label": "After the user views a certain number of pages on my site.",
-              "value": "count"
+              "value": "visits"
             },
             {
               "label": "After the user spends some amount of time on a page.",

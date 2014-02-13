@@ -104,14 +104,12 @@ CloudFlare.define("dwolla_tipjar",
     var logVisit = function() {
       // store # of visits in cookie.
       // return number of total visits
-      var previous_visits = getVisits() || 0;
-      var new_visit_count = previous_visits++;
-
-      if (previous_visits < 0) return;
-
-      setVisits(new_visit_count);
-
-      return new_visit_count;
+      var visits = getVisits() || 0;
+      if (visits < 0) return;
+      visits++;
+      setVisits(visits);
+      
+      return visits;
     }
 
     var setVisits = function(number) {
