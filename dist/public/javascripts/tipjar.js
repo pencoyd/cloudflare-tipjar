@@ -1,11 +1,11 @@
 /*
- DwollaLabs cloudflare-tipjar v0.10.8
+ DwollaLabs cloudflare-tipjar v0.10.9
 */
 CloudFlare.define("dwolla_tipjar",
   ["dwolla_tipjar/config", "cloudflare/jquery1.7"],
   function(config, $) {
     window.CF_TIPJAR = {};
-    window.CF_TIPJAR['VERSION'] = '0.10.8';
+    window.CF_TIPJAR['VERSION'] = '0.10.9';
     window.CF_TIPJAR['SESSION_ID'] = null;
     window.CF_TIPJAR['TIP'] = null;
     window.CF_TIPJAR['API_HOST'] = "https://cloudflare-tipjar.herokuapp.com/";
@@ -107,14 +107,12 @@ CloudFlare.define("dwolla_tipjar",
     var logVisit = function() {
       // store # of visits in cookie.
       // return number of total visits
-      var previous_visits = getVisits() || 0;
-      var new_visit_count = previous_visits++;
-
-      if (previous_visits < 0) return;
-
-      setVisits(new_visit_count);
-
-      return new_visit_count;
+      var visits = getVisits() || 0;
+      if (visits < 0) return;
+      visits++;
+      setVisits(visits);
+      
+      return visits;
     }
 
     var setVisits = function(number) {
