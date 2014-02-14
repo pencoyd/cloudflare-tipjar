@@ -105,9 +105,14 @@
     white-space: nowrap;
   }
   #cftipjar #tipjar-ribbon .show p {
-    background: url(../images/dwolla-tip-icon.png) no-repeat 15px 0;
+    background: url(../images/dwolla-tip-icon.png) no-repeat 15px 0px;
     padding: 0px 20px 0 40px;
-    font-size: 14px;
+    font-size: 14px !important;
+
+    font-weight: normal !important; 
+    margin-top: 14px !important;
+    margin-bottom: 14px !important;
+    line-height: normal !important;
   }
   #cftipjar #tipjar-ribbon .hide p {
     font-size: 12px;
