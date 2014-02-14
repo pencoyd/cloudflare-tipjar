@@ -125,14 +125,14 @@ module.exports = function(grunt) {
   });
 
   grunt.registerTask('build', [
-    'bump',
     'clean:dist',
     'copy',
     'imagemin',
     'usebanner',
     'string-replace',
     'aws_s3',
-    'clean:server'
+    'clean:server',
+    'bump'
   ]);
 
   grunt.registerTask('default', ['build']);
