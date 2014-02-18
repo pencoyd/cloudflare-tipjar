@@ -65,7 +65,7 @@
         "description": "Your email address, where you'd like to receive your contributions.",
         "domain_request": false,
         "required": true,
-        "private": false
+        "private": true
       }
     ]
   }
